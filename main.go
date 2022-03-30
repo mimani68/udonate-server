@@ -31,6 +31,7 @@ func main() {
 
 	// Setup Routing
 	UserController.Route(app)
+	UserController.ConsoleRoute(app)
 
 	// Start App
 	err := app.Listen(configuration.Get("ADDRESS") + ":" + configuration.Get("PORT"))

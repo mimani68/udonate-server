@@ -6,7 +6,7 @@
 |:---:|:---:|:---:|
 | Framework | Fiber | v2.0.6 |
 | Validation | Ozzo | * |
-| Configuration | GoDotEnv | * |
+| Configuration | DotEnv | * |
 | Database | MongoDB | * |
 
 ## Development
