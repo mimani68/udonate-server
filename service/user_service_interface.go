@@ -1,6 +1,6 @@
 package service
 
-import "udonate/model"
+import model "udonate/view_model"
 
 type IUserService interface {
 	Create(request model.CreateUserRequest) (response model.CreateUserResponse)

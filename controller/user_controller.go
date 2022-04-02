@@ -2,8 +2,8 @@ package controller
 
 import (
 	"udonate/exception"
-	"udonate/model"
 	"udonate/service"
+	"udonate/view_model"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -32,14 +32,14 @@ func (controller *UserController) ConsoleRoute(app *fiber.App) {
 }
 
 func (controller *UserController) Create(c *fiber.Ctx) error {
-	var request model.CreateUserRequest
+	var request view_model.CreateUserRequest
 	err := c.BodyParser(&request)
 	request.Id = uuid.New().String()
 
 	exception.PanicIfNeeded(err)
 
 	response := controller.UserService.Create(request)
-	return c.JSON(model.WebResponse{
+	return c.JSON(view_model.WebResponse{
 		Code:   200,
 		Status: "OK",
 		Data:   response,
@@ -48,7 +48,7 @@ func (controller *UserController) Create(c *fiber.Ctx) error {
 
 func (controller *UserController) List(c *fiber.Ctx) error {
 	responses := controller.UserService.List()
-	return c.JSON(model.WebResponse{
+	return c.JSON(view_model.WebResponse{
 		Code:   200,
 		Status: "OK",
 		Data:   responses,

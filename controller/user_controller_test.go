@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 	"udonate/entity"
-	"udonate/model"
+	"udonate/view_model"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -15,10 +15,10 @@ import (
 
 func TestUserController_Create(t *testing.T) {
 	UserRepository.DeleteAll()
-	createUserRequest := model.CreateUserRequest{
-		Name:     "Test User",
-		Price:    1000,
-		Quantity: 1000,
+	createUserRequest := view_model.CreateUserRequest{
+		Name: "Test User",
+		// Price:    1000,
+		// Quantity: 1000,
 	}
 	requestBody, _ := json.Marshal(createUserRequest)
 
@@ -31,27 +31,27 @@ func TestUserController_Create(t *testing.T) {
 	assert.Equal(t, 200, response.StatusCode)
 	responseBody, _ := ioutil.ReadAll(response.Body)
 
-	webResponse := model.WebResponse{}
+	webResponse := view_model.WebResponse{}
 	json.Unmarshal(responseBody, &webResponse)
 	assert.Equal(t, 200, webResponse.Code)
 	assert.Equal(t, "OK", webResponse.Status)
 
 	jsonData, _ := json.Marshal(webResponse.Data)
-	createUserResponse := model.CreateUserResponse{}
+	createUserResponse := view_model.CreateUserResponse{}
 	json.Unmarshal(jsonData, &createUserResponse)
 	assert.NotNil(t, createUserResponse.Id)
 	assert.Equal(t, createUserRequest.Name, createUserResponse.Name)
-	assert.Equal(t, createUserRequest.Price, createUserResponse.Price)
-	assert.Equal(t, createUserRequest.Quantity, createUserResponse.Quantity)
+	// assert.Equal(t, createUserRequest.Price, createUserResponse.Price)
+	// assert.Equal(t, createUserRequest.Quantity, createUserResponse.Quantity)
 }
 
 func TestUserController_List(t *testing.T) {
 	UserRepository.DeleteAll()
 	User := entity.User{
-		Id:       uuid.New().String(),
-		Name:     "Sample User",
-		Price:    1000,
-		Quantity: 1000,
+		Id:   uuid.New().String(),
+		Name: "Sample User",
+		// Price:    1000,
+		// Quantity: 1000,
 	}
 	UserRepository.Insert(User)
 
@@ -63,7 +63,7 @@ func TestUserController_List(t *testing.T) {
 	assert.Equal(t, 200, response.StatusCode)
 	responseBody, _ := ioutil.ReadAll(response.Body)
 
-	webResponse := model.WebResponse{}
+	webResponse := view_model.WebResponse{}
 	json.Unmarshal(responseBody, &webResponse)
 	assert.Equal(t, 200, webResponse.Code)
 	assert.Equal(t, "OK", webResponse.Status)
@@ -73,7 +73,7 @@ func TestUserController_List(t *testing.T) {
 
 	for _, data := range list {
 		jsonData, _ := json.Marshal(data)
-		getUserResponse := model.GetUserResponse{}
+		getUserResponse := view_model.GetUserResponse{}
 		json.Unmarshal(jsonData, &getUserResponse)
 		if getUserResponse.Id == User.Id {
 			containsUser = true

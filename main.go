@@ -44,7 +44,7 @@ func main() {
 	UserController.ConsoleRoute(app)
 
 	// Start App
-	// err := app.Listen("0.0.0.0:" + configuration.Get("PORT"))
-	err := app.Listen(":" + configuration.Get("PORT"))
+	err := app.Listen(configuration.Get("ADDRESS") + ":" + configuration.Get("PORT"))
+	// err := app.Listen(":" + configuration.Get("PORT"))
 	exception.PanicIfNeeded(err)
 }

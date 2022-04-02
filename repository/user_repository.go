@@ -24,10 +24,10 @@ func (repository *UserRepositoryImpl) Insert(User entity.User) {
 	defer cancel()
 
 	_, err := repository.Collection.InsertOne(ctx, bson.M{
-		"_id":      User.Id,
-		"name":     User.Name,
-		"price":    User.Price,
-		"quantity": User.Quantity,
+		"_id":  User.Id,
+		"name": User.Name,
+		// "price":    User.Price,
+		// "quantity": User.Quantity,
 	})
 	exception.PanicIfNeeded(err)
 }
@@ -45,10 +45,10 @@ func (repository *UserRepositoryImpl) FindAll() (Users []entity.User) {
 
 	for _, document := range documents {
 		Users = append(Users, entity.User{
-			Id:       document["_id"].(string),
-			Name:     document["name"].(string),
-			Price:    document["price"].(int64),
-			Quantity: document["quantity"].(int32),
+			Id:   document["_id"].(string),
+			Name: document["name"].(string),
+			// Price:    document["price"].(int64),
+			// Quantity: document["quantity"].(int32),
 		})
 	}
 
