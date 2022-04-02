@@ -20,13 +20,6 @@ type UserRepository struct {
 	Collection *mongo.Collection
 }
 
-func (repository *UserRepository) Insert(User entity.User) {
-	ctx, cancel := config.NewMongoContext()
-	defer cancel()
-	_, err := repository.Collection.InsertOne(ctx, User)
-	exception.PanicIfNeeded(err)
-}
-
 func (repository *UserRepository) FindAll() (Users []entity.User) {
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
@@ -39,40 +32,47 @@ func (repository *UserRepository) FindAll() (Users []entity.User) {
 	exception.PanicIfNeeded(err)
 
 	for _, document := range documents {
-		connectionStructList := []entity.Connection{}
-		if mapstructure.Decode(document["connections"], &connectionStructList) != nil {
+		user := entity.User{}
+		if mapstructure.Decode(document, &user) != nil {
 			exception.PanicIfNeeded(err)
 		}
-		reuqestStructList := []entity.Request{}
-		if mapstructure.Decode(document["requests"], &reuqestStructList) != nil {
-			exception.PanicIfNeeded(err)
-		}
-		Users = append(Users, entity.User{
-			Id:                 document["_id"].(string),
-			Name:               document["name"].(string),
-			Family:             document["family"].(string),
-			Nationality:        document["nationality"].(string),
-			Birthday:           document["birthday"].(string),
-			Sex:                document["sex"].(string),
-			NationalCode:       document["nationalCode"].(string),
-			Password:           document["password"].(string),
-			Connections:        connectionStructList,
-			ReferralCode:       document["referralCode"].(string),
-			Requests:           reuqestStructList,
-			Status:             document["status"].(string),
-			CreatedAt:          document["createdAt"].(string),
-			ModifiedAt:         document["modifiedAt"].(string),
-			DeletedAt:          document["deletedAt"].(string),
-			DeletedDescription: document["deletedDescription"].(string),
-		})
+		Users = append(Users, user)
 	}
 	return Users
 }
 
-func (repository *UserRepository) DeleteAll() {
+func (repository *UserRepository) FindUserById(userId string) (selectedUser entity.User) {
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
 
-	_, err := repository.Collection.DeleteMany(ctx, bson.M{})
+	cursor, err := repository.Collection.Find(ctx, bson.M{
+		"_id": userId,
+	})
+	exception.PanicIfNeeded(err)
+
+	var document bson.M
+	err = cursor.All(ctx, &document)
+	exception.PanicIfNeeded(err)
+
+	if mapstructure.Decode(document, &selectedUser) != nil {
+		exception.PanicIfNeeded(err)
+	}
+	return selectedUser
+}
+
+func (repository *UserRepository) Insert(User entity.User) {
+	ctx, cancel := config.NewMongoContext()
+	defer cancel()
+	_, err := repository.Collection.InsertOne(ctx, User)
+	exception.PanicIfNeeded(err)
+}
+
+func (repository *UserRepository) Delete(userId string) {
+	ctx, cancel := config.NewMongoContext()
+	defer cancel()
+
+	_, err := repository.Collection.DeleteMany(ctx, bson.M{
+		"_id": userId,
+	})
 	exception.PanicIfNeeded(err)
 }
