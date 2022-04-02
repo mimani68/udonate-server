@@ -17,9 +17,9 @@ func NewUserController(UserService *service.IUserService) UserController {
 	return UserController{UserService: *UserService}
 }
 
-func (controller *UserController) Route(app *fiber.App) {
-	app.Post("/api/users", controller.Create)
-	app.Get("/api/me", controller.List)
+func (controller *UserController) Route(app fiber.Router) {
+	app.Post("/users", controller.Create)
+	app.Get("/me", controller.List)
 }
 
 func (controller *UserController) ConsoleRoute(app *fiber.App) {

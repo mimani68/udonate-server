@@ -1,6 +1,7 @@
 package main
 
 import (
+	"time"
 	"udonate/config"
 	"udonate/controller"
 	"udonate/exception"
@@ -28,12 +29,22 @@ func main() {
 	// Setup Fiber
 	app := fiber.New(config.NewFiberConfig())
 	app.Use(recover.New())
+	apiRoute := app.Group("/v1")
+
+	// Ping
+	app.Get("/ping", func(c *fiber.Ctx) error {
+		return c.JSON(map[string]interface{}{
+			"message": "PONG",
+			"time":    time.Now().Format(time.RFC3339),
+		})
+	})
 
 	// Setup Routing
-	UserController.Route(app)
+	UserController.Route(apiRoute)
 	UserController.ConsoleRoute(app)
 
 	// Start App
-	err := app.Listen(configuration.Get("ADDRESS") + ":" + configuration.Get("PORT"))
+	// err := app.Listen("0.0.0.0:" + configuration.Get("PORT"))
+	err := app.Listen(":" + configuration.Get("PORT"))
 	exception.PanicIfNeeded(err)
 }
