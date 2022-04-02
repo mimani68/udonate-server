@@ -36,7 +36,7 @@ func (service *UserService) Create(request model.CreateUserRequest) (response mo
 		Sex:          request.Sex,
 		ReferralCode: request.ReferralCode,
 		CreatedAt:    time.Now().Format(time.RFC3339),
-		Connection: []entity.Connection{
+		Connections: []entity.Connection{
 			{
 				Title:      "email",
 				Value:      request.Email,
@@ -63,7 +63,7 @@ func (service *UserService) Create(request model.CreateUserRequest) (response mo
 		Password:     User.Password,
 		Sex:          User.Sex,
 		ReferralCode: User.ReferralCode,
-		Connection:   User.Connection,
+		Connections:  User.Connections,
 		Status:       User.Status,
 	}
 	return response
@@ -71,11 +71,19 @@ func (service *UserService) Create(request model.CreateUserRequest) (response mo
 
 func (service *UserService) List() (responses []model.GetUserResponse) {
 	Users := service.UserRepository.FindAll()
-	for _, User := range Users {
-		responses = append(responses, model.GetUserResponse{
-			Id:   User.Id,
-			Name: User.Name,
-		})
+	for _, user := range Users {
+		temp := model.GetUserResponse{
+			Id:           user.Id,
+			Name:         user.Name,
+			Family:       user.Family,
+			Nationality:  user.Nationality,
+			NationalCode: user.NationalCode,
+			Username:     user.Username,
+			Connections:  user.Connections,
+			Sex:          user.Sex,
+		}
+		temp.NationalCode = "***"
+		responses = append(responses, temp)
 	}
 	return responses
 }

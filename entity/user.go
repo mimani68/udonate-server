@@ -10,7 +10,7 @@ type User struct {
 	NationalCode       string       `json:"nationalCode,omitempty" bson:"nationalCode"`
 	Username           string       `json:"username" bson:"username"`
 	Password           string       `json:"password" bson:"password"`
-	Connection         []Connection `json:"connection,omitempty" bson:"connection"`
+	Connections        []Connection `json:"connections,omitempty" bson:"connections"`
 	ReferralCode       string       `json:"referralCode,omitempty" bson:"referralCode"`
 	Requests           []Request    `json:"requests,omitempty" bson:"requests"`
 	Status             string       `json:"status,omitempty" bson:"status"`

@@ -12,7 +12,7 @@ type CreateUserRequest struct {
 	NationalCode string `json:"nationalCode,omitempty" bson:"nationalCode"`
 	Username     string `json:"username" bson:"username"`
 	Password     string `json:"password" bson:"password"`
-	// Connection         []Connection `json:"connection,omitempty" bson:"connection"`
+	// Connections         []Connection `json:"connections,omitempty" bson:"connections"`
 	Email        string `json:"email" bson:"email"`
 	Phone        string `json:"phone" bson:"phone"`
 	ReferralCode string `json:"referralCode,omitempty" bson:"referralCode"`
@@ -30,7 +30,7 @@ type CreateUserResponse struct {
 	NationalCode string              `json:"nationalCode,omitempty" bson:"nationalCode"`
 	Username     string              `json:"username" bson:"username"`
 	Password     string              `json:"password" bson:"password"`
-	Connection   []entity.Connection `json:"connection,omitempty" bson:"connection"`
+	Connections  []entity.Connection `json:"connections,omitempty" bson:"connections"`
 	// Email        string `json:"email" bson:"email"`
 	// Phone        string `json:"phone" bson:"phone"`
 	ReferralCode string `json:"referralCode,omitempty" bson:"referralCode"`
@@ -48,11 +48,11 @@ type GetUserResponse struct {
 	NationalCode string `json:"nationalCode,omitempty" bson:"nationalCode"`
 	Username     string `json:"username" bson:"username"`
 	// Password     string `json:"password" bson:"password"`
-	// Connection         []Connection `json:"connection,omitempty" bson:"connection"`
-	ReferralCode string `json:"referralCode,omitempty" bson:"referralCode"`
-	// Requests           []Request    `json:"requests,omitempty" bson:"requests"`
-	// Status             string `json:"status,omitempty" bson:"status"`
-	CreatedAt string `json:"createdAt" bson:"createdAt"`
+	Connections  []entity.Connection `json:"connections,omitempty" bson:"connections"`
+	ReferralCode string              `json:"referralCode,omitempty" bson:"referralCode"`
+	Requests     []entity.Request    `json:"requests,omitempty" bson:"requests"`
+	Status       string              `json:"status,omitempty" bson:"status"`
+	CreatedAt    string              `json:"createdAt" bson:"createdAt"`
 	// ModifiedAt         string `json:"modifiedAt,omitempty" bson:"modifiedAt"`
 	// DeletedAt          string `json:"deletedAt,omitempty" bson:"deletedAt"`
 	// DeletedDescription string `json:"deletedDescription,omitempty" bson:"deletedDescription"`
