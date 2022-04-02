@@ -6,7 +6,6 @@ import (
 	"udonate/view_model"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 )
 
 type UserController struct {
@@ -34,10 +33,7 @@ func (controller *UserController) ConsoleRoute(app *fiber.App) {
 func (controller *UserController) Create(c *fiber.Ctx) error {
 	var request view_model.CreateUserRequest
 	err := c.BodyParser(&request)
-	request.Id = uuid.New().String()
-
 	exception.PanicIfNeeded(err)
-
 	response := controller.UserService.Create(request)
 	return c.JSON(view_model.WebResponse{
 		Code:   200,

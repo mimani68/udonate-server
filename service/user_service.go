@@ -6,6 +6,8 @@ import (
 	"udonate/repository"
 	"udonate/validation"
 	model "udonate/view_model"
+
+	"github.com/google/uuid"
 )
 
 func NewUserService(UserRepository *repository.IUserRepository) IUserService {
@@ -19,10 +21,11 @@ type UserService struct {
 }
 
 func (service *UserService) Create(request model.CreateUserRequest) (response model.CreateUserResponse) {
+	request.Id = uuid.New().String()
 	validation.Validate(request)
 
 	User := entity.User{
-		Id:           request.Id,
+		Id:           uuid.New().String(),
 		Name:         request.Name,
 		Family:       request.Family,
 		Nationality:  request.Nationality,
@@ -45,12 +48,23 @@ func (service *UserService) Create(request model.CreateUserRequest) (response mo
 				IsVerified: false,
 			},
 		},
+		Status: "ACTIVE",
 	}
 	service.UserRepository.Insert(User)
 
 	response = model.CreateUserResponse{
-		Id:   User.Id,
-		Name: User.Name,
+		Id:           User.Id,
+		Name:         User.Name,
+		Family:       User.Family,
+		Nationality:  User.Nationality,
+		NationalCode: User.NationalCode,
+		Birthday:     User.Birthday,
+		Username:     User.Username,
+		Password:     User.Password,
+		Sex:          User.Sex,
+		ReferralCode: User.ReferralCode,
+		Connection:   User.Connection,
+		Status:       User.Status,
 	}
 	return response
 }

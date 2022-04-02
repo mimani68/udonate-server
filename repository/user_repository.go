@@ -10,29 +10,23 @@ import (
 )
 
 func NewUserRepository(database *mongo.Database) IUserRepository {
-	return &UserRepositoryImpl{
+	return &UserRepository{
 		Collection: database.Collection("Users"),
 	}
 }
 
-type UserRepositoryImpl struct {
+type UserRepository struct {
 	Collection *mongo.Collection
 }
 
-func (repository *UserRepositoryImpl) Insert(User entity.User) {
+func (repository *UserRepository) Insert(User entity.User) {
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
-
-	_, err := repository.Collection.InsertOne(ctx, bson.M{
-		"_id":  User.Id,
-		"name": User.Name,
-		// "price":    User.Price,
-		// "quantity": User.Quantity,
-	})
+	_, err := repository.Collection.InsertOne(ctx, User)
 	exception.PanicIfNeeded(err)
 }
 
-func (repository *UserRepositoryImpl) FindAll() (Users []entity.User) {
+func (repository *UserRepository) FindAll() (Users []entity.User) {
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
 
@@ -47,15 +41,13 @@ func (repository *UserRepositoryImpl) FindAll() (Users []entity.User) {
 		Users = append(Users, entity.User{
 			Id:   document["_id"].(string),
 			Name: document["name"].(string),
-			// Price:    document["price"].(int64),
-			// Quantity: document["quantity"].(int32),
 		})
 	}
 
 	return Users
 }
 
-func (repository *UserRepositoryImpl) DeleteAll() {
+func (repository *UserRepository) DeleteAll() {
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
 
