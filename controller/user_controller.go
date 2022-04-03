@@ -18,7 +18,7 @@ func NewUserController(UserService *service.IUserService) UserController {
 
 func (controller *UserController) Route(app fiber.Router) {
 	app.Post("/users", controller.Create)
-	app.Get("/me", controller.List)
+	app.Get("/me", controller.Me)
 }
 
 func (controller *UserController) ConsoleRoute(app *fiber.App) {
@@ -39,6 +39,16 @@ func (controller *UserController) Create(c *fiber.Ctx) error {
 		Code:   200,
 		Status: "OK",
 		Data:   response,
+	})
+}
+
+func (controller *UserController) Me(c *fiber.Ctx) error {
+	userId := c.Get("USER")
+	responses := controller.UserService.FindUser(userId)
+	return c.JSON(view_model.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   responses,
 	})
 }
 

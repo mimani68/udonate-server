@@ -5,7 +5,7 @@ import (
 	"udonate/entity"
 	"udonate/repository"
 	"udonate/validation"
-	model "udonate/view_model"
+	"udonate/view_model"
 
 	"github.com/google/uuid"
 )
@@ -20,7 +20,44 @@ type UserService struct {
 	UserRepository repository.IUserRepository
 }
 
-func (service *UserService) Create(request model.CreateUserRequest) (response model.CreateUserResponse) {
+func (service *UserService) List() (responses []view_model.GetUserResponse) {
+	Users := service.UserRepository.FindAll()
+	for _, user := range Users {
+		temp := view_model.GetUserResponse{
+			Id:           user.Id,
+			Name:         user.Name,
+			Family:       user.Family,
+			Nationality:  user.Nationality,
+			NationalCode: user.NationalCode,
+			Username:     user.Username,
+			Connections:  user.Connections,
+			Requests:     user.Requests,
+			Sex:          user.Sex,
+		}
+		temp.NationalCode = "***"
+		responses = append(responses, temp)
+	}
+	return responses
+}
+
+func (service *UserService) FindUser(userId string) (response view_model.GetUserResponse) {
+	User := service.UserRepository.FindUserById(userId)
+	response = view_model.GetUserResponse{
+		Id:           User.Id,
+		Name:         User.Name,
+		Family:       User.Family,
+		Nationality:  User.Nationality,
+		NationalCode: User.NationalCode,
+		Username:     User.Username,
+		Connections:  User.Connections,
+		Requests:     User.Requests,
+		Sex:          User.Sex,
+	}
+	User.NationalCode = "***"
+	return response
+}
+
+func (service *UserService) Create(request view_model.CreateUserRequest) (response view_model.CreateUserResponse) {
 	request.Id = uuid.New().String()
 	validation.Validate(request)
 
@@ -52,7 +89,7 @@ func (service *UserService) Create(request model.CreateUserRequest) (response mo
 	}
 	service.UserRepository.Insert(User)
 
-	response = model.CreateUserResponse{
+	response = view_model.CreateUserResponse{
 		Id:           User.Id,
 		Name:         User.Name,
 		Family:       User.Family,
@@ -69,21 +106,19 @@ func (service *UserService) Create(request model.CreateUserRequest) (response mo
 	return response
 }
 
-func (service *UserService) List() (responses []model.GetUserResponse) {
-	Users := service.UserRepository.FindAll()
-	for _, user := range Users {
-		temp := model.GetUserResponse{
-			Id:           user.Id,
-			Name:         user.Name,
-			Family:       user.Family,
-			Nationality:  user.Nationality,
-			NationalCode: user.NationalCode,
-			Username:     user.Username,
-			Connections:  user.Connections,
-			Sex:          user.Sex,
-		}
-		temp.NationalCode = "***"
-		responses = append(responses, temp)
+func (service *UserService) Delete(userId string) (response view_model.GetUserResponse) {
+	User := service.UserRepository.FindUserById(userId)
+	response = view_model.GetUserResponse{
+		Id:           User.Id,
+		Name:         User.Name,
+		Family:       User.Family,
+		Nationality:  User.Nationality,
+		NationalCode: User.NationalCode,
+		Username:     User.Username,
+		Connections:  User.Connections,
+		Requests:     User.Requests,
+		Sex:          User.Sex,
 	}
-	return responses
+	User.NationalCode = "***"
+	return response
 }

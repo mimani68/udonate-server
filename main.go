@@ -5,11 +5,11 @@ import (
 	"udonate/config"
 	"udonate/controller"
 	"udonate/exception"
+	"udonate/middleware"
 	"udonate/repository"
 	"udonate/service"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 func main() {
@@ -28,7 +28,12 @@ func main() {
 
 	// Setup Fiber
 	app := fiber.New(config.NewFiberConfig())
-	app.Use(recover.New())
+
+	// Middleware
+	middleware.GeneralMiddleWare(app, configuration)
+	middleware.Auth(app)
+
+	// Prefix of app
 	apiRoute := app.Group("/v1")
 
 	// Ping
@@ -45,6 +50,5 @@ func main() {
 
 	// Start App
 	err := app.Listen(configuration.Get("ADDRESS") + ":" + configuration.Get("PORT"))
-	// err := app.Listen(":" + configuration.Get("PORT"))
 	exception.PanicIfNeeded(err)
 }

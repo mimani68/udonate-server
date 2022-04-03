@@ -20,6 +20,7 @@ type Config struct {
 	MONGO_POOL_MIN             string
 	MONGO_POOL_MAX             string
 	MONGO_MAX_IDLE_TIME_SECOND string
+	TZ                         string
 }
 
 func (c *Config) Get(key string) string {
@@ -39,6 +40,8 @@ func (c *Config) Get(key string) string {
 		result = c.MONGO_POOL_MAX
 	case "MONGO_MAX_IDLE_TIME_SECOND":
 		result = c.MONGO_MAX_IDLE_TIME_SECOND
+	case "TZ":
+		result = c.TZ
 	}
 	return result
 }
@@ -58,5 +61,6 @@ func New(filenames ...string) IConfig {
 		MONGO_POOL_MIN:             os.Getenv("MONGO_POOL_MIN"),
 		MONGO_POOL_MAX:             os.Getenv("MONGO_POOL_MAX"),
 		MONGO_MAX_IDLE_TIME_SECOND: os.Getenv("MONGO_MAX_IDLE_TIME_SECOND"),
+		TZ:                         "America/New_York",
 	}
 }
