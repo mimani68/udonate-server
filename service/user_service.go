@@ -43,7 +43,7 @@ func (service *UserService) List() (responses []view_model.GetUserResponse) {
 }
 
 func (service *UserService) FindUser(userId string) (response view_model.GetUserResponse) {
-	User := service.UserRepository.FindUserById(userId)
+	User, _ := service.UserRepository.FindUserById(userId)
 	response = view_model.GetUserResponse{
 		Id:           User.Id,
 		Name:         User.Name,
@@ -65,7 +65,7 @@ func (service *UserService) Create(request view_model.CreateUserRequest) (respon
 	request.Id = uuid.New().String()
 	validation.InsertNewUserValidation(request)
 
-	User := entity.User{
+	user := entity.User{
 		Id:           uuid.New().String(),
 		Name:         request.Name,
 		Family:       request.Family,
@@ -91,22 +91,22 @@ func (service *UserService) Create(request view_model.CreateUserRequest) (respon
 		},
 		Status: "ACTIVE",
 	}
-	service.UserRepository.Insert(User)
+	service.UserRepository.Insert(user)
 
 	response = view_model.CreateUserResponse{
-		Id:           User.Id,
-		Name:         User.Name,
-		Family:       User.Family,
-		Nationality:  User.Nationality,
-		NationalCode: User.NationalCode,
-		Birthday:     User.Birthday,
-		Username:     User.Username,
-		Password:     User.Password,
-		Sex:          User.Sex,
-		ReferralCode: User.ReferralCode,
-		Connections:  User.Connections,
-		Status:       User.Status,
-		CreatedAt:    User.CreatedAt,
+		Id:           user.Id,
+		Name:         user.Name,
+		Family:       user.Family,
+		Nationality:  user.Nationality,
+		NationalCode: user.NationalCode,
+		Birthday:     user.Birthday,
+		Username:     user.Username,
+		Password:     user.Password,
+		Sex:          user.Sex,
+		ReferralCode: user.ReferralCode,
+		Connections:  user.Connections,
+		Status:       user.Status,
+		CreatedAt:    user.CreatedAt,
 	}
 	return response
 }
@@ -114,7 +114,7 @@ func (service *UserService) Create(request view_model.CreateUserRequest) (respon
 func (service *UserService) Update(userId string, request view_model.UpdateUserRequest) (response view_model.CreateUserResponse) {
 	validation.UpdateUserValidation(request)
 
-	User := entity.User{
+	user := entity.User{
 		Id:           uuid.New().String(),
 		Name:         request.Name,
 		Family:       request.Family,
@@ -125,39 +125,39 @@ func (service *UserService) Update(userId string, request view_model.UpdateUserR
 		ReferralCode: request.ReferralCode,
 		ModifiedAt:   time.Now().Format(time.RFC3339),
 	}
-	service.UserRepository.Update(userId, User)
+	updatedUser, _ := service.UserRepository.Update(userId, user)
 
 	response = view_model.CreateUserResponse{
-		Id:           User.Id,
-		Name:         User.Name,
-		Family:       User.Family,
-		Nationality:  User.Nationality,
-		NationalCode: User.NationalCode,
-		Birthday:     User.Birthday,
-		Username:     User.Username,
-		Password:     User.Password,
-		Sex:          User.Sex,
-		ReferralCode: User.ReferralCode,
-		Connections:  User.Connections,
-		Status:       User.Status,
-		CreatedAt:    User.CreatedAt,
+		Id:           updatedUser.Id,
+		Name:         updatedUser.Name,
+		Family:       updatedUser.Family,
+		Nationality:  updatedUser.Nationality,
+		NationalCode: updatedUser.NationalCode,
+		Birthday:     updatedUser.Birthday,
+		Username:     updatedUser.Username,
+		Password:     updatedUser.Password,
+		Sex:          updatedUser.Sex,
+		ReferralCode: updatedUser.ReferralCode,
+		Connections:  updatedUser.Connections,
+		Status:       updatedUser.Status,
+		CreatedAt:    updatedUser.CreatedAt,
 	}
 	return response
 }
 
 func (service *UserService) Delete(userId string) (response view_model.GetUserResponse) {
-	User := service.UserRepository.FindUserById(userId)
+	user, _ := service.UserRepository.FindUserById(userId)
 	response = view_model.GetUserResponse{
-		Id:           User.Id,
-		Name:         User.Name,
-		Family:       User.Family,
-		Nationality:  User.Nationality,
-		NationalCode: User.NationalCode,
-		Username:     User.Username,
-		Connections:  User.Connections,
-		Requests:     User.Requests,
-		Sex:          User.Sex,
+		Id:           user.Id,
+		Name:         user.Name,
+		Family:       user.Family,
+		Nationality:  user.Nationality,
+		NationalCode: user.NationalCode,
+		Username:     user.Username,
+		Connections:  user.Connections,
+		Requests:     user.Requests,
+		Sex:          user.Sex,
 	}
-	User.NationalCode = "***"
+	user.NationalCode = "***"
 	return response
 }

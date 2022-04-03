@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"udonate/config"
 	"udonate/entity"
 	"udonate/exception"
@@ -21,7 +22,7 @@ type UserRepository struct {
 	Collection *mongo.Collection
 }
 
-func (repository *UserRepository) FindAll() (Users []entity.User) {
+func (repository *UserRepository) FindAll() (users []entity.User) {
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
 
@@ -38,12 +39,12 @@ func (repository *UserRepository) FindAll() (Users []entity.User) {
 			exception.PanicIfNeeded(err)
 		}
 		user.Id = document["_id"].(string)
-		Users = append(Users, user)
+		users = append(users, user)
 	}
-	return Users
+	return users
 }
 
-func (repository *UserRepository) FindUserById(userId string) (selectedUser entity.User) {
+func (repository *UserRepository) FindUserById(userId string) (selectedUser entity.User, errorObject error) {
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
 
@@ -52,53 +53,104 @@ func (repository *UserRepository) FindUserById(userId string) (selectedUser enti
 	err := repository.Collection.FindOne(ctx, bson.M{
 		"_id": userId,
 	}, opts).Decode(&document)
-	exception.PanicIfNeeded(err)
+	if err != nil {
+		// exception.PanicIfNeeded(err)
+		return selectedUser, err
+	}
 
 	if mapstructure.Decode(document, &selectedUser) != nil {
-		exception.PanicIfNeeded(err)
+		// exception.PanicIfNeeded(err)
+		return selectedUser, err
 	}
 	selectedUser.Id = document["_id"].(string)
 
-	return selectedUser
+	return selectedUser, nil
 }
 
-func (repository *UserRepository) Insert(User entity.User) {
+func (repository *UserRepository) Insert(user entity.User) (newUser entity.User, errorObject error) {
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
-	_, err := repository.Collection.InsertOne(ctx, User)
-	exception.PanicIfNeeded(err)
+	_, err := repository.Collection.InsertOne(ctx, user)
+	// exception.PanicIfNeeded(err)
+	if err != nil {
+		return newUser, err
+	} else {
+		return user, nil
+	}
 }
 
-func (repository *UserRepository) Update(userId string, User entity.User) (updatedUser entity.User) {
+func (repository *UserRepository) Update(userId string, User entity.User) (updatedUser entity.User, errorObject error) {
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
+
+	update := map[string]string{}
+	if User.Name != "" {
+		update["name"] = User.Name
+	}
+	if User.Family != "" {
+		update["family"] = User.Family
+	}
+	if User.Sex != "" {
+		update["sex"] = User.Sex
+	}
+	if User.Nationality != "" {
+		update["nationality"] = User.Nationality
+	}
+	if User.NationalCode != "" {
+		update["nationalCode"] = User.NationalCode
+	}
+	if User.Birthday != "" {
+		update["birthday"] = User.Birthday
+	}
+	if User.ReferralCode != "" {
+		update["referralCode"] = User.ReferralCode
+	}
+	if len(update) <= 0 {
+		return updatedUser, errors.New("There is no new field for update table user.")
+	}
 
 	var updatedDocument bson.M
-	opts := options.FindOneAndUpdate().SetUpsert(true)
+	opts := options.FindOneAndUpdate().SetUpsert(false)
 	filter := bson.D{{"_id", userId}}
-	updateQuery := bson.D{{"$set", bson.D{
-		{"name", User.Name},
-	}}}
+	updateQuery := map[string]interface{}{
+		"$set": update,
+	}
 	err := repository.Collection.FindOneAndUpdate(ctx, filter,
 		updateQuery,
 		opts,
 	).Decode(&updatedDocument)
-	exception.PanicIfNeeded(err)
+	// exception.PanicIfNeeded(err)
+	if err != nil {
+		return updatedUser, err
+	}
+
+	errFind := repository.Collection.FindOne(ctx, map[string]string{
+		"_id": userId,
+	}).Decode(&updatedDocument)
+	// exception.PanicIfNeeded(errFind)
+	if errFind != nil {
+		return updatedUser, errFind
+	}
 
 	if mapstructure.Decode(updatedDocument, &updatedUser) != nil {
-		exception.PanicIfNeeded(err)
+		// exception.PanicIfNeeded(err)
+		return updatedUser, errFind
 	}
 	updatedUser.Id = updatedDocument["_id"].(string)
 
-	return updatedUser
+	return updatedUser, nil
 }
 
-func (repository *UserRepository) Delete(userId string) {
+func (repository *UserRepository) Delete(userId string) (deletedUser entity.User, errorObject error) {
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
 
 	_, err := repository.Collection.DeleteOne(ctx, bson.M{
 		"_id": userId,
 	})
-	exception.PanicIfNeeded(err)
+	if err != nil {
+		return deletedUser, err
+	} else {
+		return deletedUser, nil
+	}
 }

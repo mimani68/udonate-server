@@ -5,10 +5,10 @@ import (
 )
 
 type IUserRepository interface {
-	FindAll() (Users []entity.User)
-	FindUserById(userId string) (selectedUser entity.User)
-	Insert(User entity.User)
-	Update(userId string, User entity.User) (updatedUser entity.User)
+	FindAll() (user []entity.User)
+	FindUserById(userId string) (selectedUser entity.User, errorObject error)
+	Insert(user entity.User) (newUser entity.User, errorObject error)
+	Update(userId string, user entity.User) (updatedUser entity.User, errorObject error)
 	// SoftDelete(userId string)
-	Delete(userId string)
+	Delete(userId string) (deletedUser entity.User, errorObject error)
 }

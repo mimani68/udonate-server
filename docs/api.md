@@ -20,5 +20,5 @@ http api.dappi.ir/console/users/cba2a781-2536-4543-a22e-bfe3a0e3fd8c
 Update user
 
 ```bash
-http patch api.dappi.ir/console/users/cba2a781-2536-4543-a22e-bfe3a0e3fd8c name=ali
+http patch api.dappi.ir/console/users/962e83b7-17ee-4318-b273-b940606ebc90 name=Sara family=Ansari sex=female
 ```
