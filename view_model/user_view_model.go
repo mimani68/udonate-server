@@ -43,7 +43,7 @@ type GetUserResponse struct {
 	Name         string `json:"name" bson:"name"`
 	Family       string `json:"family" bson:"family"`
 	Nationality  string `json:"nationality,omitempty" bson:"nationality"`
-	Age          string `json:"age,omitempty" bson:"age"`
+	Birthday     string `json:"birthday,omitempty" bson:"birthday"`
 	Sex          string `json:"sex,omitempty" bson:"sex"`
 	NationalCode string `json:"nationalCode,omitempty" bson:"nationalCode"`
 	Username     string `json:"username" bson:"username"`
@@ -56,4 +56,14 @@ type GetUserResponse struct {
 	// ModifiedAt         string `json:"modifiedAt,omitempty" bson:"modifiedAt"`
 	// DeletedAt          string `json:"deletedAt,omitempty" bson:"deletedAt"`
 	// DeletedDescription string `json:"deletedDescription,omitempty" bson:"deletedDescription"`
+}
+
+type UpdateUserRequest struct {
+	Name         string `json:"name" bson:"name"`
+	Family       string `json:"family" bson:"family"`
+	Nationality  string `json:"nationality,omitempty" bson:"nationality"`
+	Birthday     string `json:"birthday,omitempty" bson:"birthday"`
+	Sex          string `json:"sex,omitempty" bson:"sex"`
+	NationalCode string `json:"nationalCode,omitempty" bson:"nationalCode"`
+	ReferralCode string `json:"referralCode,omitempty" bson:"referralCode"`
 }

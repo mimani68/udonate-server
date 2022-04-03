@@ -30,9 +30,11 @@ func (service *UserService) List() (responses []view_model.GetUserResponse) {
 			Nationality:  user.Nationality,
 			NationalCode: user.NationalCode,
 			Username:     user.Username,
-			Connections:  user.Connections,
-			Requests:     user.Requests,
 			Sex:          user.Sex,
+			ReferralCode: user.ReferralCode,
+			Connections:  user.Connections,
+			Status:       user.Status,
+			CreatedAt:    user.CreatedAt,
 		}
 		temp.NationalCode = "***"
 		responses = append(responses, temp)
@@ -49,9 +51,11 @@ func (service *UserService) FindUser(userId string) (response view_model.GetUser
 		Nationality:  User.Nationality,
 		NationalCode: User.NationalCode,
 		Username:     User.Username,
-		Connections:  User.Connections,
-		Requests:     User.Requests,
 		Sex:          User.Sex,
+		ReferralCode: User.ReferralCode,
+		Connections:  User.Connections,
+		Status:       User.Status,
+		CreatedAt:    User.CreatedAt,
 	}
 	User.NationalCode = "***"
 	return response
@@ -59,7 +63,7 @@ func (service *UserService) FindUser(userId string) (response view_model.GetUser
 
 func (service *UserService) Create(request view_model.CreateUserRequest) (response view_model.CreateUserResponse) {
 	request.Id = uuid.New().String()
-	validation.Validate(request)
+	validation.InsertNewUserValidation(request)
 
 	User := entity.User{
 		Id:           uuid.New().String(),
@@ -102,6 +106,41 @@ func (service *UserService) Create(request view_model.CreateUserRequest) (respon
 		ReferralCode: User.ReferralCode,
 		Connections:  User.Connections,
 		Status:       User.Status,
+		CreatedAt:    User.CreatedAt,
+	}
+	return response
+}
+
+func (service *UserService) Update(userId string, request view_model.UpdateUserRequest) (response view_model.CreateUserResponse) {
+	validation.UpdateUserValidation(request)
+
+	User := entity.User{
+		Id:           uuid.New().String(),
+		Name:         request.Name,
+		Family:       request.Family,
+		Nationality:  request.Nationality,
+		NationalCode: request.NationalCode,
+		Birthday:     request.Birthday,
+		Sex:          request.Sex,
+		ReferralCode: request.ReferralCode,
+		ModifiedAt:   time.Now().Format(time.RFC3339),
+	}
+	service.UserRepository.Update(userId, User)
+
+	response = view_model.CreateUserResponse{
+		Id:           User.Id,
+		Name:         User.Name,
+		Family:       User.Family,
+		Nationality:  User.Nationality,
+		NationalCode: User.NationalCode,
+		Birthday:     User.Birthday,
+		Username:     User.Username,
+		Password:     User.Password,
+		Sex:          User.Sex,
+		ReferralCode: User.ReferralCode,
+		Connections:  User.Connections,
+		Status:       User.Status,
+		CreatedAt:    User.CreatedAt,
 	}
 	return response
 }
