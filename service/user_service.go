@@ -3,6 +3,8 @@ package service
 import (
 	"time"
 	"udonate/entity"
+	"udonate/pkg/gdpr"
+	"udonate/pkg/random_number"
 	"udonate/repository"
 	"udonate/validation"
 	"udonate/view_model"
@@ -28,7 +30,7 @@ func (service *UserService) List() (responses []view_model.GetUserResponse) {
 			Name:         user.Name,
 			Family:       user.Family,
 			Nationality:  user.Nationality,
-			NationalCode: user.NationalCode,
+			NationalCode: gdpr.ShowGDPR(),
 			Username:     user.Username,
 			Sex:          user.Sex,
 			ReferralCode: user.ReferralCode,
@@ -36,7 +38,10 @@ func (service *UserService) List() (responses []view_model.GetUserResponse) {
 			Status:       user.Status,
 			CreatedAt:    user.CreatedAt,
 		}
-		temp.NationalCode = "***"
+		temp.NationalCode = gdpr.ShowGDPR()
+		for i := 0; i < len(temp.Connections); i++ {
+			temp.Connections[i].VerificationCode = gdpr.ShowGDPR()
+		}
 		responses = append(responses, temp)
 	}
 	return responses
@@ -57,7 +62,10 @@ func (service *UserService) FindUser(userId string) (response view_model.GetUser
 		Status:       User.Status,
 		CreatedAt:    User.CreatedAt,
 	}
-	User.NationalCode = "***"
+	User.NationalCode = gdpr.ShowGDPR()
+	for i := 0; i < len(response.Connections); i++ {
+		response.Connections[i].VerificationCode = gdpr.ShowGDPR()
+	}
 	return response
 }
 
@@ -79,14 +87,16 @@ func (service *UserService) Create(request view_model.CreateUserRequest) (respon
 		CreatedAt:    time.Now().Format(time.RFC3339),
 		Connections: []entity.Connection{
 			{
-				Title:      "email",
-				Value:      request.Email,
-				IsVerified: false,
+				Title:            "email",
+				Value:            request.Email,
+				VerificationCode: random_number.RandomNumber(8),
+				IsVerified:       false,
 			},
 			{
-				Title:      "mobile",
-				Value:      request.Phone,
-				IsVerified: false,
+				Title:            "mobile",
+				Value:            request.Phone,
+				VerificationCode: random_number.RandomNumber(8),
+				IsVerified:       false,
 			},
 		},
 		Status: "ACTIVE",
@@ -101,12 +111,15 @@ func (service *UserService) Create(request view_model.CreateUserRequest) (respon
 		NationalCode: user.NationalCode,
 		Birthday:     user.Birthday,
 		Username:     user.Username,
-		Password:     user.Password,
+		Password:     gdpr.ShowGDPR(),
 		Sex:          user.Sex,
 		ReferralCode: user.ReferralCode,
 		Connections:  user.Connections,
 		Status:       user.Status,
 		CreatedAt:    user.CreatedAt,
+	}
+	for i := 0; i < len(response.Connections); i++ {
+		response.Connections[i].VerificationCode = gdpr.ShowGDPR()
 	}
 	return response
 }
@@ -146,7 +159,7 @@ func (service *UserService) Update(userId string, request view_model.UpdateUserR
 }
 
 func (service *UserService) Delete(userId string) (response view_model.GetUserResponse) {
-	user, _ := service.UserRepository.FindUserById(userId)
+	user, _ := service.UserRepository.DeleteUserById(userId)
 	response = view_model.GetUserResponse{
 		Id:           user.Id,
 		Name:         user.Name,
@@ -158,6 +171,6 @@ func (service *UserService) Delete(userId string) (response view_model.GetUserRe
 		Requests:     user.Requests,
 		Sex:          user.Sex,
 	}
-	user.NationalCode = "***"
+	user.NationalCode = gdpr.ShowGDPR()
 	return response
 }

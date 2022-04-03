@@ -10,5 +10,5 @@ type IUserRepository interface {
 	Insert(user entity.User) (newUser entity.User, errorObject error)
 	Update(userId string, user entity.User) (updatedUser entity.User, errorObject error)
 	// SoftDelete(userId string)
-	Delete(userId string) (deletedUser entity.User, errorObject error)
+	DeleteUserById(userId string) (deletedUser entity.User, errorObject error)
 }

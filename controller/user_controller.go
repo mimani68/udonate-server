@@ -27,8 +27,9 @@ func (controller *UserController) ConsoleRoute(app *fiber.App) {
 	app.Get("/console/users/:userId", controller.FindUser)
 	app.Post("/console/users", controller.CreateUser)
 	app.Patch("/console/users/:userId", controller.UpdateUser)
-	// app.Patch("/console/users/:userId", controller.List)
-	// app.Delete("/console/users/:userId", controller.List)
+	// app.Patch("/console/users/:userId/status/:status", controller.UpdateUser)
+	app.Delete("/console/users/:userId", controller.DeleteUser)
+	// app.Delete("/console/users/:userId/soft", controller.DeleteUser)
 }
 
 func (controller *UserController) CreateUser(c *fiber.Ctx) error {
@@ -113,6 +114,23 @@ func (controller *UserController) UpdateUser(c *fiber.Ctx) error {
 		})
 	}
 	responses := controller.UserService.Update(userId, user)
+	return c.JSON(view_model.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   responses,
+	})
+}
+
+func (controller *UserController) DeleteUser(c *fiber.Ctx) error {
+	userId := c.Params("userId")
+	if len(userId) < 10 {
+		return c.JSON(view_model.WebResponse{
+			Code:   400,
+			Status: "NOK",
+			Data:   nil,
+		})
+	}
+	responses := controller.UserService.Delete(userId)
 	return c.JSON(view_model.WebResponse{
 		Code:   200,
 		Status: "OK",

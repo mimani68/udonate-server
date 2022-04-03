@@ -141,7 +141,7 @@ func (repository *UserRepository) Update(userId string, User entity.User) (updat
 	return updatedUser, nil
 }
 
-func (repository *UserRepository) Delete(userId string) (deletedUser entity.User, errorObject error) {
+func (repository *UserRepository) DeleteUserById(userId string) (deletedUser entity.User, errorObject error) {
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
 
