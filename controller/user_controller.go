@@ -18,6 +18,11 @@ func NewUserController(UserService *service.IUserService) UserController {
 }
 
 func (controller *UserController) Route(app fiber.Router) {
+	app.Post("/signin", controller.NotImpelementedYet)
+	app.Post("/renew_token", controller.NotImpelementedYet)
+	app.Post("/reset_password", controller.NotImpelementedYet)
+	app.Post("/resend_verification_code", controller.NotImpelementedYet)
+	app.Post("/verfiy/:code", controller.NotImpelementedYet)
 	app.Post("/users", controller.CreateUser)
 	app.Get("/me", controller.Me)
 }
@@ -27,9 +32,9 @@ func (controller *UserController) ConsoleRoute(app *fiber.App) {
 	app.Get("/console/users/:userId", controller.FindUser)
 	app.Post("/console/users", controller.CreateUser)
 	app.Patch("/console/users/:userId", controller.UpdateUser)
-	// app.Patch("/console/users/:userId/status/:status", controller.UpdateUser)
+	app.Patch("/console/users/:userId/status/:status", controller.NotImpelementedYet)
 	app.Delete("/console/users/:userId", controller.DeleteUser)
-	// app.Delete("/console/users/:userId/soft", controller.DeleteUser)
+	app.Delete("/console/users/:userId/soft", controller.NotImpelementedYet)
 }
 
 func (controller *UserController) CreateUser(c *fiber.Ctx) error {
@@ -135,5 +140,13 @@ func (controller *UserController) DeleteUser(c *fiber.Ctx) error {
 		Code:   200,
 		Status: "OK",
 		Data:   responses,
+	})
+}
+
+func (controller *UserController) NotImpelementedYet(c *fiber.Ctx) error {
+	return c.JSON(view_model.WebResponse{
+		Code:   500,
+		Status: "NOK",
+		Data:   "",
 	})
 }
