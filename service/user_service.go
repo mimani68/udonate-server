@@ -174,3 +174,19 @@ func (service *UserService) Delete(userId string) (response view_model.GetUserRe
 	user.NationalCode = gdpr.ShowGDPR()
 	return response
 }
+
+func (service *UserService) UpdateConnection(conId string, connection entity.Connection) (response view_model.GetUserResponse) {
+	updatedUser, _ := service.UserRepository.UpdateUserConnections(conId, connection)
+	response = view_model.GetUserResponse{
+		Id:           updatedUser.Id,
+		Name:         updatedUser.Name,
+		Family:       updatedUser.Family,
+		Nationality:  updatedUser.Nationality,
+		NationalCode: updatedUser.NationalCode,
+		Username:     updatedUser.Username,
+		Connections:  updatedUser.Connections,
+		Requests:     updatedUser.Requests,
+		Sex:          updatedUser.Sex,
+	}
+	return response
+}

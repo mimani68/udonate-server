@@ -83,7 +83,7 @@ func (repository *UserRepository) Update(userId string, User entity.User) (updat
 	ctx, cancel := config.NewMongoContext()
 	defer cancel()
 
-	update := map[string]string{}
+	update := map[string]interface{}{}
 	if User.Name != "" {
 		update["name"] = User.Name
 	}
@@ -104,6 +104,10 @@ func (repository *UserRepository) Update(userId string, User entity.User) (updat
 	}
 	if User.ReferralCode != "" {
 		update["referralCode"] = User.ReferralCode
+	}
+
+	if User.Birthday != "" {
+		update["birthday"] = User.Birthday
 	}
 	if len(update) <= 0 {
 		return updatedUser, errors.New("There is no new field for update table user.")
